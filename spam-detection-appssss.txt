@@ -1,0 +1,5 @@
+spam-detection-app/
+ ├── appssss.py
+ ├── requirements.txt
+ ├── spam.mp3
+ └── notspam.mp3
