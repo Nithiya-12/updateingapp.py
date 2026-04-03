@@ -1,23 +1,22 @@
 import streamlit as st
-from gtts import gTTS
-import os
 
-st.title("🔊 Spam Detection App")
+st.title("📩 Spam Detection App")
 
-msg = st.text_input("Enter message")
+msg = st.text_input("Enter your message")
 
 if st.button("Check"):
-    if "offer" in msg or "win" in msg:
-        result = "Spam Message"
-        st.error("🚨 Spam Message")
+    if msg == "":
+        st.warning("Please enter a message")
     else:
-        result = "Not Spam"
-        st.success("✅ Not Spam")
+        spam_words = ["win", "offer", "free", "money", "prize"]
 
-    # Convert text to speech
-    tts = gTTS(result)
-    tts.save("output.mp3")
+        found = False
+        for word in spam_words:
+            if word.lower() in msg.lower():
+                found = True
+                break
 
-    # Play audio
-    audio_file = open("output.mp3", "rb")
-    st.audio(audio_file.read(), format="audio/mp3")
+        if found:
+            st.error("🚨 Spam Message")
+        else:
+            st.success("✅ Not Spam")
