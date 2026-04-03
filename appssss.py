@@ -2,29 +2,17 @@ import streamlit as st
 
 st.title("📩 Spam Detection App")
 
-msg = st.text_input("Enter your message")
+msg = st.text_input("Enter message")
 
 if st.button("Check"):
-    if msg.strip() == "":
-        st.warning("⚠️ Enter message")
+    if "offer" in msg or "win" in msg:
+        st.error("🚨 Spam Message")
+
+        # 🔊 Sound alert
+        st.audio("https://www.soundjay.com/buttons/sounds/beep-07.mp3")
+        
     else:
-        msg = msg.lower()
-        spam_words = ["offer", "win", "free", "money", "click"]
+        st.success("✅ Not Spam")
 
-        if any(word in msg for word in spam_words):
-            st.error("🚨 Spam Message")
-
-            try:
-                with open("spam.mp3", "rb") as f:
-                    st.audio(f.read(), format="audio/mp3")
-            except:
-                st.warning("🔇 spam.mp3 missing")
-
-        else:
-            st.success("✅ Not Spam")
-
-            try:
-                with open("notspam.mp3", "rb") as f:
-                    st.audio(f.read(), format="audio/mp3")
-            except:
-                st.warning("🔇 notspam.mp3 missing")
+        # optional sound
+        st.audio("https://www.soundjay.com/buttons/sounds/button-3.mp3")
