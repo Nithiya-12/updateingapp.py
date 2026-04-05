@@ -1,78 +1,22 @@
 import streamlit as st
-import tensorflow as tf
-import pickle
-import re
-import pandas as pd
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# ----------------------------
-# Load model & tokenizer
-# ----------------------------
-model = tf.keras.models.load_model("spam_model.h5")
-tokenizer = pickle.load(open("tokenizer.pkl", "rb"))
-max_len = 50
+st.title("📩 Spam Detection App")
 
-# ----------------------------
-# Text cleaning
-# ----------------------------
-def clean_text(text):
-    text = text.lower()
-    text = re.sub(r'[^a-zA-Z]', ' ', text)
-    return text
+msg = st.text_input("Enter your message")
 
-# ----------------------------
-# Prediction function
-# ----------------------------
-def predict_spam(text):
-    text = clean_text(text)
-    seq = tokenizer.texts_to_sequences([text])
-    padded = pad_sequences(seq, maxlen=max_len, padding='post')
-
-    score = model.predict(padded)[0][0]
-    return score
-
-# ----------------------------
-# UI
-# ----------------------------
-st.set_page_config(page_title="Spam Detector", layout="centered")
-
-st.title("📩 AI Spam Detection System")
-st.markdown("### 🔍 Detect Spam using NLP + Deep Learning")
-
-msg = st.text_area("✉ Enter Email Message")
-
-# Store history
-if "history" not in st.session_state:
-    st.session_state.history = []
-
-if st.button("Check Message"):
-    if msg.strip() == "":
-        st.warning("⚠ Please enter a message")
+if st.button("Check"):
+    if msg == "":
+        st.warning("Please enter a message")
     else:
-        score = predict_spam(msg)
+        spam_words = ["win", "offer", "free", "money", "prize"]
 
-        if score > 0.5:
-            result = "🚨 Spam"
-            st.error(result)
+        found = False
+        for word in spam_words:
+            if word.lower() in msg.lower():
+                found = True
+                break
+
+        if found:
+            st.error("🚨 Spam Message")
         else:
-            result = "✅ Not Spam"
-            st.success(result)
-
-        # Show probability
-        st.progress(float(score))
-        st.write(f"Spam Probability: **{score:.2f}**")
-
-        # Save history
-        st.session_state.history.append({
-            "Message": msg,
-            "Result": result,
-            "Score": round(score, 2)
-        })
-
-# ----------------------------
-# Show history
-# ----------------------------
-if st.session_state.history:
-    st.markdown("### 📜 History")
-    df = pd.DataFrame(st.session_state.history)
-    st.dataframe(df)
+            st.success("✅ Not Spam")
